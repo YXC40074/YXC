@@ -1,0 +1,1962 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 多啦A夢的啤酒遊戲 | Doraemon's Beer Game 🍺</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800;900&display=swap');
+        
+        :root {
+            --doraemon-blue: #0066CC;
+            --doraemon-light-blue: #4A90E2;
+            --doraemon-white: #FFFFFF;
+            --doraemon-red: #FF6B6B;
+            --doraemon-yellow: #FFD93D;
+            --doraemon-pink: #FF8FB1;
+            --doraemon-green: #4ECDC4;
+            --sky-blue: #87CEEB;
+            --cloud-white: rgba(255, 255, 255, 0.9);
+            --shadow-soft: 0 8px 32px rgba(0, 102, 204, 0.15);
+            --shadow-medium: 0 12px 40px rgba(0, 102, 204, 0.2);
+            --shadow-strong: 0 20px 60px rgba(0, 102, 204, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #87CEEB 0%, #B0E0E6 50%, #E0F6FF 100%);
+            min-height: 100vh;
+            padding: 15px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 背景雲朵裝飾 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(ellipse 150px 50px at 20% 10%, var(--cloud-white) 40%, transparent 50%),
+                radial-gradient(ellipse 100px 40px at 70% 15%, var(--cloud-white) 40%, transparent 50%),
+                radial-gradient(ellipse 120px 45px at 90% 25%, var(--cloud-white) 40%, transparent 50%),
+                radial-gradient(ellipse 180px 60px at 30% 80%, var(--cloud-white) 40%, transparent 50%),
+                radial-gradient(ellipse 140px 50px at 80% 90%, var(--cloud-white) 40%, transparent 50%);
+            animation: cloudFloat 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes cloudFloat {
+            0%, 100% { transform: translateX(0px) translateY(0px); }
+            25% { transform: translateX(10px) translateY(-5px); }
+            50% { transform: translateX(-5px) translateY(5px); }
+            75% { transform: translateX(-10px) translateY(-3px); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--cloud-white);
+            border-radius: 30px;
+            box-shadow: var(--shadow-strong);
+            overflow: hidden;
+            border: 3px solid var(--doraemon-blue);
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(10px);
+        }
+
+        /* 多啦A夢頭部設計 */
+        .header {
+            background: linear-gradient(135deg, var(--doraemon-blue), var(--doraemon-light-blue));
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '🤖';
+            position: absolute;
+            font-size: 8rem;
+            opacity: 0.1;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: headerIcon 3s ease-in-out infinite;
+        }
+
+        @keyframes headerIcon {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .doraemon-face {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .doraemon-head {
+            width: 80px;
+            height: 80px;
+            background: var(--doraemon-blue);
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid white;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .doraemon-head::before {
+            content: '👁️';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 1.2rem;
+        }
+
+        .doraemon-head::after {
+            content: '👁️';
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.2rem;
+        }
+
+        .doraemon-nose {
+            width: 12px;
+            height: 12px;
+            background: var(--doraemon-red);
+            border-radius: 50%;
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: noseGlow 1.5s ease-in-out infinite;
+        }
+
+        @keyframes noseGlow {
+            0%, 100% { box-shadow: 0 0 5px var(--doraemon-red); }
+            50% { box-shadow: 0 0 15px var(--doraemon-red); }
+        }
+
+        .title {
+            font-size: 2.8rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            font-weight: 600;
+            opacity: 0.95;
+            margin-bottom: 15px;
+        }
+
+        .game-info {
+            background: rgba(255,255,255,0.2);
+            padding: 15px 25px;
+            border-radius: 25px;
+            display: inline-block;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .main-content {
+            padding: 40px 30px;
+            background: linear-gradient(135deg, #F0F8FF, #E6F3FF);
+        }
+
+        /* 多啦A夢風格的區塊 */
+        .doraemon-section {
+            background: white;
+            border-radius: 25px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 3px solid var(--doraemon-blue);
+            box-shadow: var(--shadow-medium);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .doraemon-section::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            height: 8px;
+            background: linear-gradient(90deg, 
+                var(--doraemon-yellow) 0%, 
+                var(--doraemon-pink) 25%, 
+                var(--doraemon-green) 50%, 
+                var(--doraemon-red) 75%, 
+                var(--doraemon-blue) 100%);
+            border-radius: 25px 25px 0 0;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--doraemon-blue);
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--doraemon-yellow);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            animation: iconSpin 4s ease-in-out infinite;
+            border: 3px solid var(--doraemon-blue);
+        }
+
+        @keyframes iconSpin {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+
+        .bilingual-text {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .text-zh {
+            font-weight: 700;
+            color: var(--doraemon-blue);
+        }
+
+        .text-en {
+            font-size: 0.9rem;
+            color: var(--doraemon-light-blue);
+            font-weight: 600;
+        }
+
+        /* 進度條 - 多啦A夢風格 */
+        .progress-container {
+            background: var(--doraemon-blue);
+            border-radius: 50px;
+            height: 20px;
+            overflow: hidden;
+            border: 3px solid white;
+            box-shadow: var(--shadow-soft);
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--doraemon-yellow), var(--doraemon-green));
+            transition: width 1s ease;
+            position: relative;
+            border-radius: 50px;
+        }
+
+        .progress-fill::after {
+            content: '🚁';
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.2rem;
+            animation: fly 2s ease-in-out infinite;
+        }
+
+        @keyframes fly {
+            0%, 100% { transform: translateY(-50%) rotate(0deg); }
+            50% { transform: translateY(-60%) rotate(10deg); }
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: 700;
+            color: var(--doraemon-blue);
+            font-size: 1.2rem;
+        }
+
+        /* 統計卡片 - 道具風格 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, white, #F0F8FF);
+            border-radius: 20px;
+            padding: 25px 20px;
+            text-align: center;
+            border: 3px solid var(--doraemon-blue);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: var(--shadow-strong);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 70%);
+            animation: cardShine 3s ease-in-out infinite;
+        }
+
+        @keyframes cardShine {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            filter: drop-shadow(3px 3px 6px rgba(0,0,0,0.2));
+            animation: iconFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--doraemon-blue);
+            margin: 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            font-weight: 700;
+            color: var(--doraemon-light-blue);
+            font-size: 0.95rem;
+        }
+
+        /* 成本卡片 - 紅包風格 */
+        .cost-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .cost-card {
+            background: linear-gradient(135deg, var(--doraemon-red), var(--doraemon-pink));
+            color: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            border: 3px solid white;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .cost-card:hover {
+            transform: scale(1.05) rotate(1deg);
+            box-shadow: var(--shadow-strong);
+        }
+
+        .cost-card::before {
+            content: '💰';
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 2rem;
+            opacity: 0.3;
+            animation: coinSpin 3s linear infinite;
+        }
+
+        @keyframes coinSpin {
+            from { transform: rotateY(0deg); }
+            to { transform: rotateY(360deg); }
+        }
+
+        .cost-value {
+            font-size: 2.8rem;
+            font-weight: 900;
+            margin: 15px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* 輸入區域 - 任意門風格 */
+        .input-section {
+            background: linear-gradient(135deg, white, #E6F3FF);
+            border: 4px solid var(--doraemon-blue);
+            border-radius: 25px;
+            padding: 35px;
+            position: relative;
+        }
+
+        .input-section::before {
+            content: '🚪';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3rem;
+            background: var(--doraemon-pink);
+            padding: 10px 15px;
+            border-radius: 50%;
+            border: 3px solid var(--doraemon-blue);
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            text-align: center;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: var(--doraemon-blue);
+            font-size: 1rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border: 3px solid var(--doraemon-light-blue);
+            border-radius: 20px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, white, #F0F8FF);
+            transition: all 0.3s ease;
+            color: var(--doraemon-blue);
+        }
+
+        .input-group input:focus {
+            border-color: var(--doraemon-yellow);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(255, 215, 61, 0.3);
+            transform: scale(1.05);
+            background: white;
+        }
+
+        .input-group input:hover:not(:focus) {
+            border-color: var(--doraemon-green);
+            transform: translateY(-2px);
+        }
+
+        #myOrder {
+            border-color: var(--doraemon-red) !important;
+            background: linear-gradient(135deg, #FFF0F0, white) !important;
+            font-weight: 900 !important;
+        }
+
+        #myOrder:focus {
+            border-color: var(--doraemon-yellow) !important;
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.3) !important;
+        }
+
+        /* 按鈕 - 道具按鈕風格 */
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .doraemon-btn {
+            padding: 18px 35px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            position: relative;
+            overflow: hidden;
+            min-width: 160px;
+            border: 3px solid white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .doraemon-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.6s ease;
+        }
+
+        .doraemon-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .doraemon-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: var(--shadow-strong);
+        }
+
+        .doraemon-btn:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .btn-ai {
+            background: linear-gradient(135deg, var(--doraemon-green), var(--sky-blue));
+            color: white;
+        }
+
+        .btn-process {
+            background: linear-gradient(135deg, var(--doraemon-blue), var(--doraemon-light-blue));
+            color: white;
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, var(--doraemon-yellow), var(--doraemon-red));
+            color: white;
+        }
+
+        /* AI建議區域 - 時光機風格 */
+        .ai-suggestion {
+            background: linear-gradient(135deg, var(--doraemon-green), var(--sky-blue));
+            color: white;
+            border-radius: 25px;
+            padding: 35px;
+            margin-bottom: 30px;
+            display: none;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid white;
+        }
+
+        .ai-suggestion::before {
+            content: '🔮';
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2.5rem;
+            animation: crystal 2s ease-in-out infinite;
+        }
+
+        @keyframes crystal {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(180deg); }
+        }
+
+        .suggestion-content {
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        /* 歷史記錄 - 記憶吐司風格 */
+        .history-section {
+            background: linear-gradient(135deg, #FFFACD, #F0F8FF);
+            border: 4px solid var(--doraemon-blue);
+            border-radius: 25px;
+            padding: 35px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .history-section::before {
+            content: '📜';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3rem;
+            background: var(--doraemon-yellow);
+            padding: 10px;
+            border-radius: 50%;
+            border: 3px solid var(--doraemon-blue);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 15px;
+            margin-top: 20px;
+            border: 2px solid var(--doraemon-blue);
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 0.9rem;
+        }
+
+        .history-table th {
+            background: linear-gradient(135deg, #87CEEB, #B0E0E6);
+            color: var(--doraemon-blue);
+            padding: 15px 8px;
+            text-align: center;
+            font-weight: 800;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            border-right: 2px solid white;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+        }
+
+        .history-table td {
+            padding: 12px 8px;
+            text-align: center;
+            border-bottom: 1px solid var(--doraemon-light-blue);
+            border-right: 1px solid #E6F3FF;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .history-table tbody tr:nth-child(even) {
+            background: #F0F8FF;
+        }
+
+        .history-table tbody tr:hover {
+            background: var(--doraemon-yellow);
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        /* 懸浮按鈕 - 竹蜻蜓風格 */
+        .floating-actions {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .floating-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border: 4px solid white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .floating-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            animation: floatingGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes floatingGlow {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(180deg); }
+        }
+
+        .floating-btn:hover {
+            transform: scale(1.2) rotate(10deg);
+            box-shadow: var(--shadow-strong);
+        }
+
+        .floating-btn.help {
+            background: linear-gradient(135deg, var(--doraemon-yellow), var(--doraemon-red));
+        }
+
+        .floating-btn.scroll-top {
+            background: linear-gradient(135deg, var(--doraemon-blue), var(--doraemon-light-blue));
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .container {
+                margin: 5px;
+                border-radius: 20px;
+            }
+            
+            .main-content {
+                padding: 25px 20px;
+            }
+            
+            .title {
+                font-size: 2.2rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .doraemon-btn {
+                min-width: auto;
+                width: 100%;
+            }
+
+            .floating-actions {
+                bottom: 20px;
+                right: 15px;
+            }
+
+            .floating-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+        }
+
+        /* 特效動畫 */
+        .animate-in {
+            animation: slideInUp 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 規則區域特殊樣式 */
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .rule-card {
+            background: linear-gradient(135deg, white, #F0F8FF);
+            border: 3px solid var(--doraemon-light-blue);
+            border-radius: 20px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rule-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--doraemon-yellow);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .rule-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--doraemon-yellow), var(--doraemon-pink));
+        }
+
+        .rule-title {
+            font-weight: 800;
+            color: var(--doraemon-blue);
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rule-emoji {
+            font-size: 1.5rem;
+            animation: ruleFloat 2s ease-in-out infinite;
+        }
+
+        @keyframes ruleFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-3px); }
+        }
+
+        /* 加載動畫 */
+        .loading {
+            opacity: 0;
+        }
+
+        .loaded {
+            opacity: 1;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        /* 警告提示框 */
+        .doraemon-alert {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--doraemon-yellow);
+            color: var(--doraemon-blue);
+            padding: 15px 25px;
+            border-radius: 25px;
+            border: 3px solid var(--doraemon-blue);
+            z-index: 10000;
+            font-weight: 800;
+            box-shadow: var(--shadow-strong);
+            animation: alertBounce 0.5s ease-out;
+        }
+
+        @keyframes alertBounce {
+            0% { transform: translateX(-50%) translateY(-100px); }
+            100% { transform: translateX(-50%) translateY(0); }
+        }
+    </style>
+</head>
+<body class="loading">
+    <div class="container">
+        <!-- 多啦A夢風格頭部 -->
+        <header class="header">
+            <div class="header-content">
+                <div class="doraemon-face">
+                    <div class="doraemon-head">
+                        <div class="doraemon-nose"></div>
+                    </div>
+                </div>
+                <h1 class="title">🤖 多啦A夢的啤酒遊戲 🍺</h1>
+                <div class="subtitle">Doraemon's Magical Supply Chain Adventure | 多啦A夢的神奇供應鏈冒險</div>
+                <div class="game-info">
+                    <i class="fas fa-user-tie"></i> 經銷商角色 Distributor Role 
+                    <span style="margin: 0 15px;">•</span>
+                    <i class="fas fa-target"></i> 目標：用神奇道具最小化成本！Goal: Minimize costs with magical tools!
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- 進度區域 - 時光隧道 -->
+            <div class="doraemon-section animate-in">
+                <div class="section-title">
+                    <div class="section-icon">🚁</div>
+                    <div class="bilingual-text">
+                        <span class="text-zh">時光隧道進度</span>
+                        <span class="text-en">Time Tunnel Progress</span>
+                    </div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-fill" id="progressBar"></div>
+                </div>
+                <div class="progress-text" id="progressText">Week 0 / 60 | 第0週 / 60週</div>
+            </div>
+
+            <!-- 遊戲規則 - 百科全書 -->
+            <div class="doraemon-section animate-in">
+                <div class="section-title">
+                    <div class="section-icon">📚</div>
+                    <div class="bilingual-text">
+                        <span class="text-zh">多啦A夢百科全書</span>
+                        <span class="text-en">Doraemon's Encyclopedia</span>
+                    </div>
+                </div>
+                <div class="rules-grid">
+                    <div class="rule-card">
+                        <div class="rule-title">
+                            <span class="rule-emoji">💰</span>
+                            <div class="bilingual-text">
+                                <span class="text-zh">神奇計算器成本公式</span>
+                                <span class="text-en">Magic Calculator Cost Formula</span>
+                            </div>
+                        </div>
+                        <div class="bilingual-text">
+                            <span class="text-zh">庫存成本 0.5元/單位/週，缺貨成本 1元/單位/週</span>
+                            <span class="text-en">Inventory: $0.5/unit/week, Shortage: $1.0/unit/week</span>
+                        </div>
+                    </div>
+                    <div class="rule-card">
+                        <div class="rule-title">
+                            <span class="rule-emoji">🧮</span>
+                            <div class="bilingual-text">
+                                <span class="text-zh">總成本魔法公式</span>
+                                <span class="text-en">Total Cost Magic Formula</span>
+                            </div>
+                        </div>
+                        <div class="bilingual-text">
+                            <span class="text-zh">(庫存+延遲1+延遲2) × 0.5 + 缺貨量 × 1.0</span>
+                            <span class="text-en">(Inventory + Delay1 + Delay2) × 0.5 + Shortage × 1.0</span>
+                        </div>
+                    </div>
+                    <div class="rule-card">
+                        <div class="rule-title">
+                            <span class="rule-emoji">🚀</span>
+                            <div class="bilingual-text">
+                                <span class="text-zh">時光機延遲系統</span>
+                                <span class="text-en">Time Machine Delay System</span>
+                            </div>
+                        </div>
+                        <div class="bilingual-text">
+                            <span class="text-zh">貨物穿越時空：延遲2 → 延遲1 → 庫存</span>
+                            <span class="text-en">Goods time travel: Delay2 → Delay1 → Inventory</span>
+                        </div>
+                    </div>
+                    <div class="rule-card">
+                        <div class="rule-title">
+                            <span class="rule-emoji">⚠️</span>
+                            <div class="bilingual-text">
+                                <span class="text-zh">警報器缺貨提醒</span>
+                                <span class="text-en">Alarm for Shortage Alert</span>
+                            </div>
+                        </div>
+                        <div class="bilingual-text">
+                            <span class="text-zh">缺貨會觸發警報，產生雙倍懲罰成本</span>
+                            <span class="text-en">Shortages trigger alarms with double penalty costs</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 道具狀態監控 -->
+            <div class="doraemon-section animate-in">
+                <div class="section-title">
+                    <div class="section-icon">📊</div>
+                    <div class="bilingual-text">
+                        <span class="text-zh">神奇道具狀態監控</span>
+                        <span class="text-en">Magical Tools Status Monitor</span>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">🕐</div>
+                        <div class="stat-value" id="currentWeek">0</div>
+                        <div class="stat-label">
+                            <div class="bilingual-text">
+                                <span class="text-zh">當前週數 (Current Week)</span>
+                                <span class="text-en">遊戲進行的週數</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📦</div>
+                        <div class="stat-value" id="inventory">4</div>
+                        <div class="stat-label">
+                            <div class="bilingual-text">
+                                <span class="text-zh">庫存量 (Inventory)</span>
+                                <span class="text-en">可立即出貨的商品數量</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⏰</div>
+                        <div class="stat-value" id="delay1">4</div>
+                        <div class="stat-label">
+                            <div class="bilingual-text">
+                                <span class="text-zh">延遲1 (Delay 1)</span>
+                                <span class="text-en">下週會到達的貨物</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⌛</div>
+                        <div class="stat-value" id="delay2">4</div>
+                        <div class="stat-label">
+                            <div class="bilingual-text">
+                                <span class="text-zh">延遲2 (Delay 2)</span>
+                                <span class="text-en">兩週後會到達的貨物</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🚨</div>
+                        <div class="stat-value" id="backorder">0</div>
+                        <div class="stat-label">
+                            <div class="bilingual-text">
+                                <span class="text-zh">缺貨量 (Shortage)</span>
+                                <span class="text-en">無法滿足的訂單數量</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 成本水晶球 -->
+            <div class="doraemon-section animate-in">
+                <div class="section-title">
+                    <div class="section-icon">🔮</div>
+                    <div class="bilingual-text">
+                        <span class="text-zh">預知水晶球成本分析</span>
+                        <span class="text-en">Fortune Crystal Ball Cost Analysis</span>
+                    </div>
+                </div>
+                <div class="cost-cards">
+                    <div class="cost-card">
+                        <div class="bilingual-text">
+                            <span class="text-zh">本週成本 (Weekly Cost)</span>
+                            <span class="text-en">本週產生的總成本</span>
+                        </div>
+                        <div class="cost-value" id="weeklyCost">6.0</div>
+                        <small>元 / Dollars</small>
+                    </div>
+                    <div class="cost-card">
+                        <div class="bilingual-text">
+                            <span class="text-zh">累積總成本 (Total Cost)</span>
+                            <span class="text-en">從開始累積的總成本</span>
+                        </div>
+                        <div class="cost-value" id="totalCost">6.0</div>
+                        <small>元 / Dollars</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 任意門數據輸入 -->
+            <div class="doraemon-section animate-in">
+                <div class="input-section">
+                    <div class="section-title">
+                        <div class="section-icon">🚪</div>
+                        <div class="bilingual-text">
+                            <span class="text-zh">任意門數據輸入區</span>
+                            <span class="text-en">Anywhere Door Data Input Zone</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 基礎數據輸入 -->
+                    <h3 style="color: var(--doraemon-blue); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                        <span>📊 本週發生的事實數據 | Weekly Facts Data</span>
+                    </h3>
+                    <div class="input-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                        <div class="input-group">
+                            <label>
+                                <div class="bilingual-text">
+                                    <span class="text-zh">🏪 批發商訂單 (Wholesaler Order)</span>
+                                    <span class="text-en">批發商向您下的訂單數量</span>
+                                </div>
+                            </label>
+                            <input type="number" id="wholesalerOrder" min="0" placeholder="數量">
+                        </div>
+                        <div class="input-group">
+                            <label>
+                                <div class="bilingual-text">
+                                    <span class="text-zh">🚚 實際出貨量 (Actual Shipment)</span>
+                                    <span class="text-en">您實際出貨的數量</span>
+                                </div>
+                            </label>
+                            <input type="number" id="actualShip" min="0" placeholder="數量">
+                        </div>
+                        <div class="input-group">
+                            <label>
+                                <div class="bilingual-text">
+                                    <span class="text-zh">📦 更新庫存 (Updated Inventory)</span>
+                                    <span class="text-en">本週結束後的庫存數量</span>
+                                </div>
+                            </label>
+                            <input type="number" id="newInventory" min="0" placeholder="數量">
+                        </div>
+                        <div class="input-group">
+                            <label>
+                                <div class="bilingual-text">
+                                    <span class="text-zh">⏰ 更新延遲1 (Updated Delay1)</span>
+                                    <span class="text-en">下週會到達的貨物數量</span>
+                                </div>
+                            </label>
+                            <input type="number" id="newDelay1" min="0" placeholder="數量">
+                        </div>
+                        <div class="input-group">
+                            <label>
+                                <div class="bilingual-text">
+                                    <span class="text-zh">⌛ 更新延遲2 (Updated Delay2)</span>
+                                    <span class="text-en">兩週後會到達的貨物數量</span>
+                                </div>
+                            </label>
+                            <input type="number" id="newDelay2" min="0" placeholder="數量">
+                        </div>
+                    </div>
+
+                    <!-- AI建議按鈕 -->
+                    <div style="text-align: center; margin: 30px 0;">
+                        <button class="doraemon-btn btn-ai" onclick="getAISuggestion()" style="font-size: 1.1rem; padding: 20px 40px;">
+                            <i class="fas fa-robot"></i>
+                            <div style="margin-left: 8px;">
+                                🔮 AI智能建議<br>AI Magic Advice
+                            </div>
+                        </button>
+                        <p style="margin-top: 10px; color: var(--doraemon-light-blue); font-weight: 600;">
+                            💡 建議先獲取AI策略分析，再決定訂購數量<br>
+                            💡 Get AI strategy analysis first, then decide order quantity
+                        </p>
+                    </div>
+
+                    <!-- 決策輸入區 -->
+                    <div style="background: linear-gradient(135deg, #FFF0F0, #FFE6E6); border: 3px solid var(--doraemon-red); border-radius: 20px; padding: 25px; margin-top: 30px; position: relative;">
+                        <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--doraemon-red); color: white; padding: 8px 20px; border-radius: 20px; font-weight: 800; font-size: 0.9rem;">
+                            🎯 重要決策 Important Decision
+                        </div>
+                        
+                        <h3 style="color: var(--doraemon-red); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; justify-content: center; margin-top: 10px;">
+                            <span>🧠 基於分析的策略決策 | Strategic Decision Based on Analysis</span>
+                        </h3>
+                        
+                        <div class="input-group" style="max-width: 300px; margin: 0 auto;">
+                            <label>
+                                <div class="bilingual-text">
+                                    <span class="text-zh">🏭 我的工廠訂單 (My Factory Order)</span>
+                                    <span class="text-en">基於AI建議，您要向工廠訂購的數量</span>
+                                </div>
+                            </label>
+                            <input type="number" id="myOrder" min="0" placeholder="訂購量" style="border-color: var(--doraemon-red) !important; font-size: 1.4rem !important; font-weight: 900 !important;">
+                        </div>
+                        
+                        <div style="text-align: center; margin-top: 15px;">
+                            <p style="color: var(--doraemon-red); font-weight: 700; font-size: 0.9rem;">
+                                ⚠️ 這個決策將影響未來幾週的庫存和成本<br>
+                                ⚠️ This decision will affect future weeks' inventory and costs
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 執行按鈕 -->
+                    <div class="button-group" style="margin-top: 30px;">
+                        <button class="doraemon-btn btn-process" onclick="processWeek()">
+                            <i class="fas fa-magic"></i>
+                            <div style="margin-left: 8px;">
+                                ✨ 施展魔法<br>Cast Magic
+                            </div>
+                        </button>
+                        <button class="doraemon-btn btn-reset" onclick="resetGame()">
+                            <i class="fas fa-redo-alt"></i>
+                            <div style="margin-left: 8px;">
+                                🌀 時光重置<br>Time Reset
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI占卜區域 -->
+            <div class="ai-suggestion" id="aiSuggestion">
+                <div class="section-title" style="color: white; margin-bottom: 20px;">
+                    <div class="section-icon" style="background: rgba(255,255,255,0.3);">🔮</div>
+                    <div class="bilingual-text">
+                        <span class="text-zh">多啦A夢AI智能占卜</span>
+                        <span class="text-en">Doraemon AI Fortune Telling</span>
+                    </div>
+                </div>
+                <div class="suggestion-content" id="suggestionContent">
+                    <!-- AI建議內容將在這裡動態生成 -->
+                </div>
+            </div>
+
+            <!-- 記憶吐司歷史記錄 -->
+            <div class="doraemon-section animate-in">
+                <div class="history-section">
+                    <div class="section-title">
+                        <div class="section-icon">📜</div>
+                        <div class="bilingual-text">
+                            <span class="text-zh">記憶吐司歷史記錄</span>
+                            <span class="text-en">Memory Bread History Records</span>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        <div class="bilingual-text">
+                                            <span class="text-zh">週數</span>
+                                            <span class="text-en">Week</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="bilingual-text">
+                                            <span class="text-zh">批發商訂單</span>
+                                            <span class="text-en">Wholesaler Order</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="bilingual-text">
+                                            <span class="text-zh">實際出貨</span>
+                                            <span class="text-en">Actual Ship</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="bilingual-text">
+                                            <span class="text-zh">我的訂單</span>
+                                            <span class="text-en">My Order</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="bilingual-text">
+                                            <span class="text-zh">庫存</span>
+                                            <span class="text-en">Inventory</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="bilingual-text">
+                                            <span class="text-zh">延遲1</span>
+                                            <span class="text-en">Delay1</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="bilingual-text">
+                                            <span class="text-zh">延遲2</span>
+                                            <span class="text-en">Delay2</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="bilingual-text">
+                                            <span class="text-zh">缺貨</span>
+                                            <span class="text-en">Shortage</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="bilingual-text">
+                                            <span class="text-zh">週成本</span>
+                                            <span class="text-en">Week Cost</span>
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="bilingual-text">
+                                            <span class="text-zh">累積成本</span>
+                                            <span class="text-en">Total Cost</span>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                                <tr>
+                                    <td>0</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>4</td>
+                                    <td>4</td>
+                                    <td>4</td>
+                                    <td>0</td>
+                                    <td>6.0</td>
+                                    <td>6.0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 竹蜻蜓懸浮按鈕 -->
+    <div class="floating-actions">
+        <div class="floating-btn help" onclick="showGameHelp()" title="多啦A夢幫助 Doraemon Help">
+            🤖
+        </div>
+        <div class="floating-btn scroll-top" onclick="scrollToTop()" title="竹蜻蜓回頂部 Bamboo-copter to Top">
+            🚁
+        </div>
+    </div>
+
+    <script>
+        // 遊戲狀態管理
+        let gameState = {
+            currentWeek: 0,
+            inventory: 4,
+            delay1: 4,
+            delay2: 4,
+            backorder: 0,
+            weeklyCost: 6.0,
+            totalCost: 6.0,
+            history: []
+        };
+
+        // 頁面載入初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 載入動畫
+            setTimeout(() => {
+                document.body.classList.remove('loading');
+                document.body.classList.add('loaded');
+                
+                // 依序顯示動畫
+                const elements = document.querySelectorAll('.animate-in');
+                elements.forEach((el, index) => {
+                    setTimeout(() => {
+                        el.style.animationDelay = `${index * 0.1}s`;
+                    }, index * 100);
+                });
+            }, 500);
+
+            // 設定第一週預設數據
+            setDefaultWeekData();
+            updateDisplay();
+            updateProgressBar();
+        });
+
+        function setDefaultWeekData() {
+            document.getElementById('wholesalerOrder').value = 0;
+            document.getElementById('actualShip').value = 0;
+            document.getElementById('myOrder').value = '';  // 保持空白，讓用戶決策
+            document.getElementById('newInventory').value = 8;
+            document.getElementById('newDelay1').value = 4;
+            document.getElementById('newDelay2').value = 0;
+        }
+
+        function calculateCost(inventory, delay1, delay2, backorder) {
+            const inventoryCost = (inventory + delay1 + delay2) * 0.5;
+            const backorderCost = backorder * 1.0;
+            return inventoryCost + backorderCost;
+        }
+
+        function updateDisplay() {
+            // 更新數值顯示並添加多啦A夢風格動畫
+            const elements = ['currentWeek', 'inventory', 'delay1', 'delay2', 'backorder', 'weeklyCost', 'totalCost'];
+            
+            elements.forEach(id => {
+                const element = document.getElementById(id);
+                const currentValue = element.textContent;
+                let newValue;
+                
+                switch(id) {
+                    case 'currentWeek':
+                        newValue = gameState.currentWeek;
+                        break;
+                    case 'inventory':
+                        newValue = gameState.inventory;
+                        break;
+                    case 'delay1':
+                        newValue = gameState.delay1;
+                        break;
+                    case 'delay2':
+                        newValue = gameState.delay2;
+                        break;
+                    case 'backorder':
+                        newValue = gameState.backorder;
+                        break;
+                    case 'weeklyCost':
+                        newValue = gameState.weeklyCost.toFixed(1);
+                        break;
+                    case 'totalCost':
+                        newValue = gameState.totalCost.toFixed(1);
+                        break;
+                }
+                
+                if (currentValue !== newValue.toString()) {
+                    element.style.transform = 'scale(1.2) rotate(5deg)';
+                    element.style.color = 'var(--doraemon-red)';
+                    setTimeout(() => {
+                        element.textContent = newValue;
+                        element.style.transform = 'scale(1) rotate(0deg)';
+                        element.style.color = '';
+                    }, 200);
+                }
+            });
+        }
+
+        function updateProgressBar() {
+            const progress = (gameState.currentWeek / 60) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = `Week ${gameState.currentWeek} / 60 | 第${gameState.currentWeek}週 / 60週 🚁`;
+        }
+
+        function getAISuggestion() {
+            const wholesalerOrder = parseInt(document.getElementById('wholesalerOrder').value) || 0;
+            const actualShip = parseInt(document.getElementById('actualShip').value) || 0;
+            const newInventory = parseInt(document.getElementById('newInventory').value) || 0;
+            const newDelay1 = parseInt(document.getElementById('newDelay1').value) || 0;
+            const newDelay2 = parseInt(document.getElementById('newDelay2').value) || 0;
+
+            // 檢查基礎數據是否已輸入
+            if (isNaN(wholesalerOrder) || isNaN(actualShip) || isNaN(newInventory) || isNaN(newDelay1) || isNaN(newDelay2)) {
+                showDoraemonAlert('🤖 多啦A夢提醒：請先填入上方的事實數據！\nDoraemon reminds: Please fill in the facts data above first!', 'warning');
+                return;
+            }
+
+            const newBackorder = Math.max(0, gameState.backorder + wholesalerOrder - actualShip);
+            
+            let suggestion = generateDoraemonAISuggestion(wholesalerOrder, newInventory, newDelay1, newDelay2, newBackorder);
+            
+            document.getElementById('suggestionContent').innerHTML = suggestion;
+            document.getElementById('aiSuggestion').style.display = 'block';
+            
+            // 平滑滾動到AI建議區域
+            document.getElementById('aiSuggestion').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }
+
+        function applySuggestedOrder(suggestedOrder) {
+            document.getElementById('myOrder').value = suggestedOrder;
+            
+            // 視覺反饋 - 讓輸入框閃爍一下
+            const orderInput = document.getElementById('myOrder');
+            orderInput.style.background = 'linear-gradient(135deg, var(--doraemon-yellow), #FFE6B3)';
+            orderInput.style.transform = 'scale(1.1)';
+            orderInput.style.boxShadow = '0 0 20px rgba(255, 215, 61, 0.6)';
+            
+            setTimeout(() => {
+                orderInput.style.background = '';
+                orderInput.style.transform = '';
+                orderInput.style.boxShadow = '';
+            }, 1000);
+            
+            // 顯示成功提示
+            showDoraemonAlert(`✅ AI建議已採用！訂購數量設為 ${suggestedOrder}\n✅ AI suggestion applied! Order quantity set to ${suggestedOrder}`, 'success');
+            
+            // 滾動到訂單輸入區域
+            document.getElementById('myOrder').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }
+
+        function generateDoraemonAISuggestion(wholesalerOrder, inventory, delay1, delay2, backorder) {
+            let totalInPipeline = delay1 + delay2;
+            let suggestedOrder = 0;
+            let reasoning = "";
+
+            // 計算歷史平均需求
+            let recentDemands = gameState.history.slice(-4).map(h => h.wholesalerOrder);
+            let avgDemand = recentDemands.length > 0 ? 
+                recentDemands.reduce((a, b) => a + b, 0) / recentDemands.length : wholesalerOrder;
+
+            let targetInventory = Math.ceil(avgDemand * 2);
+
+            // 多啦A夢風格的AI建議
+            if (backorder > 0) {
+                suggestedOrder = backorder + wholesalerOrder + targetInventory - totalInPipeline;
+                reasoning = generateDoraemonShortageStrategy(backorder, wholesalerOrder, targetInventory, totalInPipeline, suggestedOrder);
+            } else if (inventory < targetInventory) {
+                let shortfall = targetInventory - inventory;
+                suggestedOrder = Math.max(0, shortfall + avgDemand - totalInPipeline);
+                reasoning = generateDoraemonReplenishmentStrategy(shortfall, avgDemand, totalInPipeline, suggestedOrder);
+            } else if (inventory > targetInventory * 1.5) {
+                suggestedOrder = Math.max(0, Math.ceil(avgDemand * 0.5) - totalInPipeline);
+                reasoning = generateDoraemonCostControlStrategy(inventory, avgDemand, totalInPipeline, suggestedOrder);
+            } else {
+                suggestedOrder = Math.max(0, Math.ceil(avgDemand) - totalInPipeline + (targetInventory - inventory));
+                reasoning = generateDoraemonStableStrategy(avgDemand, targetInventory, inventory, totalInPipeline, suggestedOrder);
+            }
+
+            let currentCost = calculateCost(inventory, delay1, delay2, backorder);
+            let costAnalysis = generateDoraemonCostAnalysis(currentCost, inventory, delay1, delay2, backorder);
+            
+            let actionButton = `
+                <div style="margin-top: 30px; text-align: center; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 15px; border: 2px solid rgba(255,255,255,0.3);">
+                    <button onclick="applySuggestedOrder(${suggestedOrder})" style="
+                        background: linear-gradient(135deg, var(--doraemon-yellow), var(--doraemon-red));
+                        color: white;
+                        border: none;
+                        padding: 15px 30px;
+                        border-radius: 25px;
+                        font-size: 1.2rem;
+                        font-weight: 800;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        border: 3px solid white;
+                        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                    " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        ✨ 採用建議：訂購 ${suggestedOrder} 單位<br>
+                        ✨ Apply Suggestion: Order ${suggestedOrder} Units
+                    </button>
+                    <p style="margin-top: 10px; opacity: 0.8; font-size: 0.9rem;">
+                        點擊此按鈕將自動填入建議的訂購數量<br>
+                        Click to automatically fill in the suggested order quantity
+                    </p>
+                </div>`;
+
+            return reasoning + costAnalysis + actionButton;
+        }
+
+        function generateDoraemonShortageStrategy(backorder, wholesalerOrder, targetInventory, totalInPipeline, suggestedOrder) {
+            return `
+                <div style="margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-size: 1.4rem;">
+                        🚨 <span>緊急！使用竹蜻蜓快速補貨策略！</span>
+                    </h4>
+                    <h5 style="margin-bottom: 10px; opacity: 0.9; font-size: 1.1rem;">
+                        Emergency! Use Bamboo-copter Fast Restocking Strategy!
+                    </h5>
+                    <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 15px; margin-bottom: 15px; border: 2px solid rgba(255,255,255,0.4);">
+                        <p style="font-size: 1.3rem; font-weight: 800; margin-bottom: 10px; text-align: center;">
+                            🎯 <strong>多啦A夢建議立即訂購 ${suggestedOrder} 個神奇單位！</strong>
+                        </p>
+                        <p style="font-size: 1.1rem; font-weight: 600; text-align: center; opacity: 0.9;">
+                            Doraemon suggests ordering ${suggestedOrder} magic units immediately!
+                        </p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.3);">
+                            <h5 style="color: #fff; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                                🤖 <span>多啦A夢的神奇分析</span>
+                            </h5>
+                            <ul style="margin: 0; padding-left: 20px; line-height: 2;">
+                                <li>🚨 緊急補足缺貨：${backorder} 單位</li>
+                                <li>🏪 滿足批發商需求：${wholesalerOrder} 單位</li>
+                                <li>🛡️ 建立安全防護庫存：${targetInventory} 單位</li>
+                                <li>⏰ 時光機在途貨物：${totalInPipeline} 單位</li>
+                                <li><strong style="color: var(--doraemon-yellow);">🔥 危險等級：非常高！</strong></li>
+                            </ul>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.3);">
+                            <h5 style="color: #fff; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                                🌟 <span>Doraemon's Magic Analysis</span>
+                            </h5>
+                            <ul style="margin: 0; padding-left: 20px; line-height: 2;">
+                                <li>🚨 Emergency shortage cover: ${backorder} units</li>
+                                <li>🏪 Meet wholesaler demand: ${wholesalerOrder} units</li>
+                                <li>🛡️ Build safety stock: ${targetInventory} units</li>
+                                <li>⏰ Time machine pipeline: ${totalInPipeline} units</li>
+                                <li><strong style="color: var(--doraemon-yellow);">🔥 Risk Level: Very High!</strong></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function generateDoraemonReplenishmentStrategy(shortfall, avgDemand, totalInPipeline, suggestedOrder) {
+            return `
+                <div style="margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-size: 1.4rem;">
+                        📈 <span>使用放大鏡精明補貨策略！</span>
+                    </h4>
+                    <h5 style="margin-bottom: 10px; opacity: 0.9; font-size: 1.1rem;">
+                        Use Magnifying Glass Smart Replenishment Strategy!
+                    </h5>
+                    <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 15px; margin-bottom: 15px; border: 2px solid rgba(255,255,255,0.4);">
+                        <p style="font-size: 1.3rem; font-weight: 800; margin-bottom: 10px; text-align: center;">
+                            💡 <strong>多啦A夢建議適度訂購 ${suggestedOrder} 個神奇單位！</strong>
+                        </p>
+                        <p style="font-size: 1.1rem; font-weight: 600; text-align: center; opacity: 0.9;">
+                            Doraemon suggests moderate ordering of ${suggestedOrder} magic units!
+                        </p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.3);">
+                            <h5 style="color: #fff; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                                🔍 <span>放大鏡精準分析</span>
+                            </h5>
+                            <ul style="margin: 0; padding-left: 20px; line-height: 2;">
+                                <li>📉 補足庫存缺口：${shortfall} 單位</li>
+                                <li>📊 預期平均需求：${Math.ceil(avgDemand)} 單位</li>
+                                <li>🚀 時光機在途：${totalInPipeline} 單位</li>
+                                <li>⚖️ 風險評估：中等</li>
+                                <li><strong style="color: var(--doraemon-green);">🎯 策略：穩健補貨</strong></li>
+                            </ul>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.3);">
+                            <h5 style="color: #fff; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                                🔍 <span>Precise Analysis</span>
+                            </h5>
+                            <ul style="margin: 0; padding-left: 20px; line-height: 2;">
+                                <li>📉 Fill inventory gap: ${shortfall} units</li>
+                                <li>📊 Expected avg demand: ${Math.ceil(avgDemand)} units</li>
+                                <li>🚀 Time machine pipeline: ${totalInPipeline} units</li>
+                                <li>⚖️ Risk assessment: Medium</li>
+                                <li><strong style="color: var(--doraemon-green);">🎯 Strategy: Stable restocking</strong></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function generateDoraemonCostControlStrategy(inventory, avgDemand, totalInPipeline, suggestedOrder) {
+            return `
+                <div style="margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-size: 1.4rem;">
+                        💰 <span>使用縮小燈節約成本策略！</span>
+                    </h4>
+                    <h5 style="margin-bottom: 10px; opacity: 0.9; font-size: 1.1rem;">
+                        Use Shrinking Light Cost Saving Strategy!
+                    </h5>
+                    <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 15px; margin-bottom: 15px; border: 2px solid rgba(255,255,255,0.4);">
+                        <p style="font-size: 1.3rem; font-weight: 800; margin-bottom: 10px; text-align: center;">
+                            🎯 <strong>多啦A夢建議保守訂購 ${suggestedOrder} 個神奇單位！</strong>
+                        </p>
+                        <p style="font-size: 1.1rem; font-weight: 600; text-align: center; opacity: 0.9;">
+                            Doraemon suggests conservative ordering of ${suggestedOrder} magic units!
+                        </p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.3);">
+                            <h5 style="color: #fff; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                                💎 <span>縮小燈成本控制</span>
+                            </h5>
+                            <ul style="margin: 0; padding-left: 20px; line-height: 2;">
+                                <li>📦 四次元口袋庫存：${inventory} 單位（充足）</li>
+                                <li>📈 預期市場需求：${Math.ceil(avgDemand)} 單位</li>
+                                <li>⏰ 時光機在途存貨：${totalInPipeline} 單位</li>
+                                <li>💸 成本風險等級：低</li>
+                                <li><strong style="color: var(--doraemon-yellow);">🎯 重點：降低庫存成本</strong></li>
+                            </ul>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.3);">
+                            <h5 style="color: #fff; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                                💎 <span>Cost Control Analysis</span>
+                            </h5>
+                            <ul style="margin: 0; padding-left: 20px; line-height: 2;">
+                                <li>📦 4D Pocket inventory: ${inventory} units (sufficient)</li>
+                                <li>📈 Expected market demand: ${Math.ceil(avgDemand)} units</li>
+                                <li>⏰ Time machine pipeline: ${totalInPipeline} units</li>
+                                <li>💸 Cost risk level: Low</li>
+                                <li><strong style="color: var(--doraemon-yellow);">🎯 Focus: Reduce inventory costs</strong></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function generateDoraemonStableStrategy(avgDemand, targetInventory, inventory, totalInPipeline, suggestedOrder) {
+            return `
+                <div style="margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-size: 1.4rem;">
+                        ⚖️ <span>使用天平保持完美平衡策略！</span>
+                    </h4>
+                    <h5 style="margin-bottom: 10px; opacity: 0.9; font-size: 1.1rem;">
+                        Use Balance Scale Perfect Equilibrium Strategy!
+                    </h5>
+                    <div style="background: rgba(255,255,255,0.2); padding: 20px; border-radius: 15px; margin-bottom: 15px; border: 2px solid rgba(255,255,255,0.4);">
+                        <p style="font-size: 1.3rem; font-weight: 800; margin-bottom: 10px; text-align: center;">
+                            ✅ <strong>多啦A夢建議穩定訂購 ${suggestedOrder} 個神奇單位！</strong>
+                        </p>
+                        <p style="font-size: 1.1rem; font-weight: 600; text-align: center; opacity: 0.9;">
+                            Doraemon suggests stable ordering of ${suggestedOrder} magic units!
+                        </p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.3);">
+                            <h5 style="color: #fff; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                                🌟 <span>神奇平衡指南</span>
+                            </h5>
+                            <ul style="margin: 0; padding-left: 20px; line-height: 2;">
+                                <li>📊 預期市場需求：${Math.ceil(avgDemand)} 單位</li>
+                                <li>📈 庫存狀態調整：${targetInventory - inventory} 單位</li>
+                                <li>🚀 時光隧道供應：${totalInPipeline} 單位</li>
+                                <li>🔄 運營狀態：完美平衡</li>
+                                <li><strong style="color: var(--doraemon-blue);">🎯 目標：維持神奇平衡</strong></li>
+                            </ul>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.3);">
+                            <h5 style="color: #fff; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                                🌟 <span>Magic Balance Guide</span>
+                            </h5>
+                            <ul style="margin: 0; padding-left: 20px; line-height: 2;">
+                                <li>📊 Expected market demand: ${Math.ceil(avgDemand)} units</li>
+                                <li>📈 Inventory adjustment: ${targetInventory - inventory} units</li>
+                                <li>🚀 Time tunnel supply: ${totalInPipeline} units</li>
+                                <li>🔄 Operation status: Perfect balance</li>
+                                <li><strong style="color: var(--doraemon-blue);">🎯 Goal: Maintain magic balance</strong></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function generateDoraemonCostAnalysis(currentCost, inventory, delay1, delay2, backorder) {
+            return `
+                <div style="margin-top: 25px; padding-top: 20px; border-top: 3px solid rgba(255,255,255,0.4);">
+                    <h4 style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-size: 1.4rem;">
+                        🔮 <span>詳細成本分析報告！</span>
+                    </h4>
+                    <h5 style="margin-bottom: 15px; opacity: 0.9; font-size: 1.1rem;">
+                        Detailed Cost Analysis Report!
+                    </h5>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.3);">
+                            <h5 style="color: #fff; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                                💰 <span>中文成本明細</span>
+                            </h5>
+                            <div style="line-height: 2; font-size: 0.95rem;">
+                                <p><strong>🏆 本週預估總成本：${currentCost.toFixed(1)} 元</strong></p>
+                                <p>├─ 💎 庫存持有成本：${((inventory + delay1 + delay2) * 0.5).toFixed(1)} 元</p>
+                                <p>│  ├─ 📦 庫存：${inventory} × 0.5 = ${(inventory * 0.5).toFixed(1)} 元</p>
+                                <p>│  ├─ ⏰ 延遲1：${delay1} × 0.5 = ${(delay1 * 0.5).toFixed(1)} 元</p>
+                                <p>│  └─ ⌛ 延遲2：${delay2} × 0.5 = ${(delay2 * 0.5).toFixed(1)} 元</p>
+                                <p>└─ 🚨 缺貨懲罰成本：${(backorder * 1.0).toFixed(1)} 元</p>
+                            </div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.3);">
+                            <h5 style="color: #fff; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                                💰 <span>English Cost Breakdown</span>
+                            </h5>
+                            <div style="line-height: 2; font-size: 0.95rem;">
+                                <p><strong>🏆 Weekly estimated total cost: ${currentCost.toFixed(1)}</strong></p>
+                                <p>├─ 💎 Inventory holding cost: ${((inventory + delay1 + delay2) * 0.5).toFixed(1)}</p>
+                                <p>│  ├─ 📦 Inventory: ${inventory} × 0.5 = ${(inventory * 0.5).toFixed(1)}</p>
+                                <p>│  ├─ ⏰ Delay1: ${delay1} × 0.5 = ${(delay1 * 0.5).toFixed(1)}</p>
+                                <p>│  └─ ⌛ Delay2: ${delay2} × 0.5 = ${(delay2 * 0.5).toFixed(1)}</p>
+                                <p>└─ 🚨 Shortage penalty cost: ${(backorder * 1.0).toFixed(1)}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function processWeek() {
+            const wholesalerOrder = parseInt(document.getElementById('wholesalerOrder').value);
+            const actualShip = parseInt(document.getElementById('actualShip').value);
+            const myOrder = parseInt(document.getElementById('myOrder').value);
+            const newInventory = parseInt(document.getElementById('newInventory').value);
+            const newDelay1 = parseInt(document.getElementById('newDelay1').value);
+            const newDelay2 = parseInt(document.getElementById('newDelay2').value);
+
+            // 輸入驗證
+            if ([wholesalerOrder, actualShip, newInventory, newDelay1, newDelay2].some(val => isNaN(val))) {
+                showDoraemonAlert('🤖 多啦A夢提醒：請填入所有基礎數據！\nDoraemon reminds: Please fill in all basic data!', 'warning');
+                return;
+            }
+            
+            if (isNaN(myOrder)) {
+                showDoraemonAlert('🤖 多啦A夢提醒：請決定工廠訂購數量！建議先點擊AI建議\nDoraemon reminds: Please decide factory order quantity! Try AI suggestion first', 'warning');
+                return;
+            }
+
+            // 計算新狀態
+            const newBackorder = Math.max(0, gameState.backorder + wholesalerOrder - actualShip);
+            const weeklyCost = calculateCost(newInventory, newDelay1, newDelay2, newBackorder);
+
+            // 更新遊戲狀態
+            gameState.currentWeek++;
+            gameState.inventory = newInventory;
+            gameState.delay1 = newDelay1;
+            gameState.delay2 = newDelay2;
+            gameState.backorder = newBackorder;
+            gameState.weeklyCost = weeklyCost;
+            gameState.totalCost += weeklyCost;
+
+            // 記錄歷史
+            gameState.history.push({
+                week: gameState.currentWeek,
+                wholesalerOrder: wholesalerOrder,
+                actualShip: actualShip,
+                myOrder: myOrder,
+                inventory: newInventory,
+                delay1: newDelay1,
+                delay2: newDelay2,
+                backorder: newBackorder,
+                weeklyCost: weeklyCost,
+                totalCost: gameState.totalCost
+            });
+
+            // 更新顯示
+            updateDisplay();
+            updateProgressBar();
+            updateHistoryTable();
+            
+            // 隱藏AI建議
+            document.getElementById('aiSuggestion').style.display = 'none';
+            clearInputs();
+
+            // 檢查遊戲結束
+            if (gameState.currentWeek >= 60) {
+                setTimeout(() => {
+                    showDoraemonGameEnd();
+                }, 500);
+                return;
+            }
+
+            // 顯示處理成功提示
+            showDoraemonAlert(`✅ 第${gameState.currentWeek}週數據處理完成！\n✅ Week ${gameState.currentWeek} data processed successfully!`, 'success');
+        }
+
+        function showDoraemonAlert(message, type = 'info') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'doraemon-alert';
+            alertDiv.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.5rem;">🤖</span>
+                    <div style="font-weight: 600;">${message}</div>
+                </div>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 4000);
+        }
+
+        function showDoraemonGameEnd() {
+            const endMessage = `
+                🎉 恭喜！多啦A夢的供應鏈冒險完成了！ 🎉
+                Congratulations! Doraemon's Supply Chain Adventure Complete!
+                
+                🏆 最終統計 Final Statistics:
+                • 60週總成本 Total Cost: ${gameState.totalCost.toFixed(1)} 元/$
+                • 平均週成本 Average Weekly Cost: ${(gameState.totalCost/60).toFixed(1)} 元/$
+                
+                🤖 多啦A夢說：「你做得很棒！供應鏈管理真是神奇的學問呢！」
+                Doraemon says: "You did great! Supply chain management is truly amazing!"
+                
+                ✨ 謝謝你和多啦A夢一起學習！ Thank you for learning with Doraemon! ✨
+            `;
+            alert(endMessage);
+        }
+
+        function updateHistoryTable() {
+            const tbody = document.getElementById('historyTableBody');
+            tbody.innerHTML = `<tr>
+                <td>0</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+                <td>4</td>
+                <td>4</td>
+                <td>4</td>
+                <td>0</td>
+                <td>6.0</td>
+                <td>6.0</td>
+            </tr>`;
+
+            gameState.history.forEach(record => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${record.week}</td>
+                    <td>${record.wholesalerOrder}</td>
+                    <td>${record.actualShip}</td>
+                    <td>${record.myOrder !== null ? record.myOrder : '-'}</td>
+                    <td>${record.inventory}</td>
+                    <td>${record.delay1}</td>
+                    <td>${record.delay2}</td>
+                    <td>${record.backorder}</td>
+                    <td>${record.weeklyCost.toFixed(1)}</td>
+                    <td>${record.totalCost.toFixed(1)}</td>
+                `;
+            });
+        }
+
+        function clearInputs() {
+            ['wholesalerOrder', 'actualShip', 'newInventory', 'newDelay1', 'newDelay2'].forEach(id => {
+                const input = document.getElementById(id);
+                input.value = '';
+                input.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    input.style.transform = 'scale(1)';
+                }, 200);
+            });
+            
+            // 清空訂單輸入，但不做動畫（因為這是決策性輸入）
+            document.getElementById('myOrder').value = '';
+        }
+
+        function resetGame() {
+            const confirmMessage = '🤖 多啦A夢問：確定要重新開始遊戲嗎？\nDoraemon asks: Are you sure to restart the game?';
+            
+            if (confirm(confirmMessage)) {
+                // 重置遊戲狀態
+                gameState = {
+                    currentWeek: 0,
+                    inventory: 4,
+                    delay1: 4,
+                    delay2: 4,
+                    backorder: 0,
+                    weeklyCost: 6.0,
+                    totalCost: 6.0,
+                    history: []
+                };
+                
+                // 更新所有顯示
+                updateDisplay();
+                updateProgressBar();
+                updateHistoryTable();
+                clearInputs();
+                setDefaultWeekData();
+                
+                // 隱藏AI建議
+                document.getElementById('aiSuggestion').style.display = 'none';
+                
+                // 顯示重置成功提示
+                showDoraemonAlert('🔄 遊戲重新開始！Game restarted!', 'success');
+            }
+        }
+
+        function showGameHelp() {
+            const helpContent = `
+                🤖 多啦A夢的供應鏈管理指南 | Doraemon's Supply Chain Management Guide
+                
+                📚 操作步驟 Operation Steps:
+                1️⃣ 觀察當前狀態 Check current status (庫存、延遲等)
+                2️⃣ 輸入每週數據 Input weekly data (訂單、出貨等)
+                3️⃣ 使用「AI建議」獲得策略 Use "AI Suggestion" for strategy
+                4️⃣ 點擊「施展魔法」處理 Click "Cast Magic" to process
+                5️⃣ 重複60週完成挑戰 Repeat for 60 weeks to complete
+                
+                🎯 遊戲目標：最小化60週總成本！
+                🎯 Game Goal: Minimize total cost over 60 weeks!
+                
+                💡 重要提醒：每個決策都會影響未來幾週的成本！
+                💡 Important: Every decision affects costs for future weeks!
+            `;
+            alert(helpContent);
+        }
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // 頁面載入完成後執行
+        updateDisplay();
+        updateProgressBar();
+    </script>
+</body>
+</html>
